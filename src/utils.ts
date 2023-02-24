@@ -1,5 +1,6 @@
 import figlet from 'figlet';
 import chalk from 'chalk';
+import { getNpmTarball, getAndExtractTarball, getLatestVersion } from 'ice-npm-utils';
 
 /**
  * 输出 banner
@@ -34,4 +35,21 @@ export const logger = {
   info(...msg: string[]) {
     console.log(chalk.cyanBright(...msg));
   },
+};
+
+/**
+ * 通过 npm 下载模板
+ * @param npmName
+ * @param npmVerison
+ * @param dir
+ */
+export const downloadFromNpm = async (npmName: string, npmVerison: string = 'latest', dir: string) => {
+  let version: string = npmVerison;
+  if (npmVerison === 'latest') {
+    version = await getLatestVersion(npmName);
+  }
+
+  const tarball = await getNpmTarball(npmName, version);
+
+  await getAndExtractTarball(dir, tarball);
 };

@@ -8,7 +8,9 @@ export interface CreatorConext {
 export interface TemplateConfig {
     name: string;
     description: string;
-    type?: 'local' | 'git';
+    type?: 'local' | 'git' | 'npm';
+    path?: string;
+    tips?: boolean | string[] | ((context: CreatorConext) => string[]);
     beforeTask?: (context: CreatorConext) => any;
     afterTask?: (context: CreatorConext) => any;
 }
