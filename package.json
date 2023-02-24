@@ -1,6 +1,6 @@
 {
   "name": "@tangjs/octopus",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -10,8 +10,9 @@
     "dev": "tsc --watch"
   },
   "keywords": [],
-  "author": "",
+  "author": "tangmouren",
   "license": "ISC",
+  "repository": "https://github.com/zixingtangmouren/octopus",
   "devDependencies": {
     "@types/figlet": "^1.5.5",
     "@types/fs-extra": "^11.0.1",
