@@ -48,7 +48,7 @@ export default class Creator {
   private async selectTemplate() {
     const defaultTemplate = this.templates[0];
 
-    if (!this.templateName) {
+    if (!this.templateName || this.templates.length > 1) {
       const answer = await inquirer.prompt({
         type: 'list',
         name: 'template',
