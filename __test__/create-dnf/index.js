@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const path = require('path');
-const { createOctopus } = require('@tangjs/octopus');
+const { createOctopus } = require('../../lib');
 const templates = require('./config');
 
 createOctopus({

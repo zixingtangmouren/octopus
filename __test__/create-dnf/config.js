@@ -1,4 +1,4 @@
-const { defineTemplate } = require('@tangjs/octopus');
+const { defineTemplate } = require('../../lib');
 
 const templateA = defineTemplate({
   name: 'template-a',
