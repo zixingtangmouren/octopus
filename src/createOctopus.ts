@@ -15,7 +15,7 @@ interface CreateOctopusOptions {
 export default async function createOctopus(options: CreateOctopusOptions) {
   const { name, version, description, templates, templatesDir, banner: bannerConf } = options;
 
-  await printBanner({ type: 'block', color: 'green-cyan', value: name, ...bannerConf });
+  await printBanner({ type: 'block', color: '#58bc58-cyan', value: name, ...bannerConf });
 
   const program = new Command();
 

@@ -1,6 +1,8 @@
 import figlet from 'figlet';
 import { getNpmTarball, getAndExtractTarball, getLatestVersion } from 'ice-npm-utils';
 import gradient from 'gradient-string';
+import { type TipsValue } from './defineTmeplate';
+import { type CreatorConext } from './creator';
 
 export interface BannerConfig {
   type: 'text' | 'block';
@@ -50,7 +52,7 @@ export const logger = {
     console.log(gradient('red', 'red')(...msg));
   },
   success(...msg: string[]) {
-    console.log(gradient('green', 'green')(...msg));
+    console.log(gradient('#58bc58', '#58bc58')(...msg));
   },
   info(...msg: string[]) {
     console.log(gradient('cyan', 'cyan')(...msg));
@@ -72,4 +74,19 @@ export const downloadFromNpm = async (npmName: string, npmVerison: string = 'lat
   const tarball = await getNpmTarball(npmName, version);
 
   await getAndExtractTarball(dir, tarball);
+};
+
+/**
+ * 通过 git 下载
+ */
+export const downloadFromGit = async () => {
+  //
+};
+
+export const processTip = (tip: TipsValue<string | string[]>, context: CreatorConext) => {
+  if (typeof tip === 'function') {
+    return tip(context);
+  }
+
+  return tip;
 };

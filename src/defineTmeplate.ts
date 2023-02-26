@@ -1,10 +1,10 @@
-import { type logger } from './utils';
+import { type CreatorConext } from './creator';
 
-export interface CreatorConext {
-  dirname: string;
-  dirPtah: string;
-  logger: typeof logger;
-  [key: string]: any;
+export type TipsValue<T> = boolean | T | ((context: CreatorConext) => Promise<T> | T);
+interface Tips {
+  startCreate: TipsValue<string>;
+  creationCompleted: TipsValue<string>;
+  finish: TipsValue<string[]>;
 }
 
 export interface TemplateConfig {
@@ -12,9 +12,10 @@ export interface TemplateConfig {
   description: string;
   type?: 'local' | 'git' | 'npm';
   path?: string;
-  tips?: boolean | string[] | ((context: CreatorConext) => string[]);
-  beforeTask?: (context: CreatorConext) => any;
-  afterTask?: (context: CreatorConext) => any;
+  tips: Tips;
+  onContextCreated?: (context: CreatorConext) => any;
+  onBeforeEmit?: (context: CreatorConext) => any;
+  onAfterEmit?: (context: CreatorConext) => any;
 }
 
 export default function defineTemplate(config: TemplateConfig): TemplateConfig {
@@ -23,8 +24,13 @@ export default function defineTemplate(config: TemplateConfig): TemplateConfig {
     description: config.description || '',
     type: config.type ?? 'local',
     path: config.path,
-    tips: config.tips,
-    beforeTask: config.beforeTask,
-    afterTask: config.afterTask,
+    tips: config.tips ?? {
+      startCreate: 'Project is being created...',
+      creationCompleted: 'Project initialization completed',
+      finish: ({ dirname }) => [`cd ${dirname}`, 'npm install', 'npm run start'],
+    },
+    onContextCreated: config.onContextCreated,
+    onBeforeEmit: config.onBeforeEmit,
+    onAfterEmit: config.onAfterEmit,
   };
 }
