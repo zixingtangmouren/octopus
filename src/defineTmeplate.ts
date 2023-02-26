@@ -27,7 +27,7 @@ const defaultTips: Tips = {
 export default function defineTemplate(config: TemplateConfig): TemplateConfig {
   return {
     name: config.name,
-    description: config.description || '',
+    description: config.description || config.name,
     type: config.type ?? 'local',
     path: config.path,
     tips: config.tips
