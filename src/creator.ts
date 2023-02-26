@@ -108,8 +108,11 @@ export default class Creator {
   private async generateProject() {
     const { type, tips } = this.templateConfig;
 
+    const startCreateTip = processTip(tips.startCreate, this.context);
+    const creationCompletedTip = processTip(tips.creationCompleted, this.context);
+
     await this.applyBeforeEmitHook();
-    logger.info(processTip(tips.startCreate, this.context) as string);
+    startCreateTip && logger.info(startCreateTip as string);
 
     switch (type) {
       case 'local':
@@ -122,7 +125,7 @@ export default class Creator {
         await this.downloadTemplateFromNpm();
     }
     await this.applyAfterEmitHook();
-    logger.success(processTip(tips.creationCompleted, this.context) as string);
+    creationCompletedTip && logger.success(creationCompletedTip as string);
   }
 
   private async createContext() {
