@@ -1,4 +1,4 @@
-const { defineTemplate } = require('../../lib');
+import { defineTemplate } from '../../lib/index.js';
 
 const templateA = defineTemplate({
   name: 'template-a',
@@ -21,4 +21,4 @@ const reactTemplate = defineTemplate({
   },
 });
 
-module.exports = [templateA, reactTemplate];
+export default [templateA, reactTemplate];

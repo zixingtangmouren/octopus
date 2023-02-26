@@ -1,8 +1,8 @@
-#!/usr/bin/env node
-
-const path = require('path');
-const { createOctopus } = require('../../lib');
-const templates = require('./config');
+import path from 'path';
+import { createOctopus } from '../../lib/index.js';
+import templates from './config.js';
+import * as url from 'url';
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 createOctopus({
   name: 'dnf', // 工具的名字
