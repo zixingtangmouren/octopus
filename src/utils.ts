@@ -1,8 +1,8 @@
 import figlet from 'figlet';
 import { getNpmTarball, getAndExtractTarball, getLatestVersion } from 'ice-npm-utils';
 import gradient from 'gradient-string';
-import { type TipsValue } from './defineTmeplate';
-import { type CreatorConext } from './creator';
+import { type TipsValue } from './defineTmeplate.js';
+import { type CreatorConext } from './creator.js';
 
 export interface BannerConfig {
   type: 'text' | 'block';

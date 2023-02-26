@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "commonjs",
+    "module": "ES2022",
     "experimentalDecorators": true,
     "strictNullChecks": true,
     "declaration": true,

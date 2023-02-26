@@ -1,4 +1,4 @@
-import { type CreatorConext } from './creator';
+import { type CreatorConext } from './creator.js';
 
 export type TipsValue<T> = boolean | T | ((context: CreatorConext) => Promise<T> | T);
 interface Tips {

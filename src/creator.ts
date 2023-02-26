@@ -1,9 +1,9 @@
 import * as fs from 'fs-extra';
-import { type TemplateConfig } from './defineTmeplate';
+import { type TemplateConfig } from './defineTmeplate.js';
 import * as path from 'path';
 import inquirer from 'inquirer';
-import { downloadFromNpm, logger, processTip, downloadFromGit } from './utils';
-import { ERROR_CODE } from './constant';
+import { downloadFromNpm, logger, processTip, downloadFromGit } from './utils.js';
+import { ERROR_CODE } from './constant.js';
 
 interface CreatorOptions {
   // 创建目录
