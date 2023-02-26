@@ -1,20 +1,21 @@
 import { type TemplateConfig } from './defineTmeplate';
-import { printBanner } from './utils';
+import { type BannerConfig, printBanner } from './utils';
 import { Command } from 'commander';
 import Creator from './creator';
 
 interface CreateOctopusOptions {
   name: string;
   version: string;
+  banner?: BannerConfig;
   description: string;
   templatesDir?: string;
   templates: TemplateConfig[];
 }
 
 export default async function createOctopus(options: CreateOctopusOptions) {
-  const { name, version, description, templates, templatesDir } = options;
+  const { name, version, description, templates, templatesDir, banner: bannerConf } = options;
 
-  await printBanner(name);
+  await printBanner({ type: 'block', color: 'green-cyan', value: name, ...bannerConf });
 
   const program = new Command();
 
@@ -52,5 +53,6 @@ export default async function createOctopus(options: CreateOctopusOptions) {
     templateName,
     templates,
     templatesDir,
+    args: process.argv.slice(2),
   }).run();
 }

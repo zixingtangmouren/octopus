@@ -1,39 +1,59 @@
 import figlet from 'figlet';
-import chalk from 'chalk';
 import { getNpmTarball, getAndExtractTarball, getLatestVersion } from 'ice-npm-utils';
+import gradient from 'gradient-string';
+
+export interface BannerConfig {
+  type: 'text' | 'block';
+  color: string;
+  value: string;
+}
 
 /**
- * 输出 banner
+ * 输出 value
  * @param banner
  * @param color
  */
-export async function printBanner(banner: string, color: string = '#58bc58') {
+export async function printBanner(bannerConf: BannerConfig) {
   console.clear();
-  const data = await new Promise((resolve, reject) => {
-    figlet(banner, (err, data) => {
-      if (err) {
-        reject(err);
-        return;
-      }
-      resolve(data);
-    });
-  });
 
-  console.log(chalk.hex(color)(data));
+  const { type, color, value } = bannerConf;
+
+  const colors = color.split('-');
+
+  let data: string;
+  switch (type) {
+    case 'block':
+      data = await new Promise((resolve, reject) => {
+        figlet(value, (err, data) => {
+          if (err) {
+            reject(err);
+            return;
+          }
+          resolve(data as string);
+        });
+      });
+      break;
+    case 'text':
+      data = value;
+      break;
+  }
+  console.log(' ');
+  console.log(gradient(colors.length > 1 ? colors : [colors[0], colors[0]])(data));
+  console.log(' ');
 }
 
 export const logger = {
   error(...msg: string[]) {
-    console.log(chalk.redBright(...msg));
+    console.log(gradient('red', 'red')(...msg));
   },
   wran(...msg: string[]) {
-    console.log(chalk.redBright(...msg));
+    console.log(gradient('red', 'red')(...msg));
   },
   success(...msg: string[]) {
-    console.log(chalk.greenBright(...msg));
+    console.log(gradient('green', 'green')(...msg));
   },
   info(...msg: string[]) {
-    console.log(chalk.cyanBright(...msg));
+    console.log(gradient('cyan', 'cyan')(...msg));
   },
 };
 
