@@ -1,4 +1,5 @@
-import fs from 'fs-extra';
+import fsextra from 'fs-extra';
+import fs from 'fs/promises';
 import { type TemplateConfig } from './defineTmeplate.js';
 import path from 'path';
 import inquirer from 'inquirer';
@@ -88,7 +89,7 @@ export default class Creator {
   }
 
   private async checkTargetDir() {
-    const isExist = await fs.exists(this.dirPtah);
+    const isExist = await fsextra.exists(this.dirPtah);
 
     if (isExist) {
       const files = await fs.readdir(this.dirPtah);
@@ -202,7 +203,7 @@ export default class Creator {
     if (this.templatesDir) {
       const { name } = this.templateConfig;
       const templateDir = path.resolve(this.templatesDir, name);
-      await fs.copy(templateDir, this.dirPtah);
+      await fsextra.copy(templateDir, this.dirPtah);
     } else {
       logger.error('Local template path exception');
     }

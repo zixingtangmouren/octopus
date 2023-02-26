@@ -1,6 +1,6 @@
 {
   "name": "@tangjs/octopus",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -38,5 +38,8 @@
     "gradient-string": "^2.0.2",
     "ice-npm-utils": "^3.0.2",
     "inquirer": "^9.1.4"
+  },
+  "engines": {
+    "node": ">14.21.3"
   }
 }
