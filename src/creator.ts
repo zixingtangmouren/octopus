@@ -1,6 +1,6 @@
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import { type TemplateConfig } from './defineTmeplate.js';
-import * as path from 'path';
+import path from 'path';
 import inquirer from 'inquirer';
 import { downloadFromNpm, logger, processTip, downloadFromGit } from './utils.js';
 import { ERROR_CODE } from './constant.js';

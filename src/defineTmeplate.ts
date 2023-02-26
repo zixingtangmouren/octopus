@@ -18,17 +18,24 @@ export interface TemplateConfig {
   onAfterEmit?: (context: CreatorConext) => any;
 }
 
+const defaultTips: Tips = {
+  startCreate: 'Project is being created...',
+  creationCompleted: 'Project initialization completed',
+  finish: ({ dirname }) => [`cd ${dirname}`, 'npm install', 'npm run start'],
+};
+
 export default function defineTemplate(config: TemplateConfig): TemplateConfig {
   return {
     name: config.name,
     description: config.description || '',
     type: config.type ?? 'local',
     path: config.path,
-    tips: config.tips ?? {
-      startCreate: 'Project is being created...',
-      creationCompleted: 'Project initialization completed',
-      finish: ({ dirname }) => [`cd ${dirname}`, 'npm install', 'npm run start'],
-    },
+    tips: config.tips
+      ? {
+          ...defaultTips,
+          ...config.tips,
+        }
+      : defaultTips,
     onContextCreated: config.onContextCreated,
     onBeforeEmit: config.onBeforeEmit,
     onAfterEmit: config.onAfterEmit,
