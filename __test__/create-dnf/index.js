@@ -1,7 +1,7 @@
 import path from 'path';
 import { createOctopus } from '../../lib/index.js';
 import templates from './config.js';
-import * as url from 'url';
+import url from 'url';
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 createOctopus({
