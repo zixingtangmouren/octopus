@@ -12,7 +12,7 @@ export interface TemplateConfig {
   description: string;
   type?: 'local' | 'git' | 'npm';
   path?: string;
-  tips: Tips;
+  tips?: Partial<Tips>;
   onContextCreated?: (context: CreatorConext) => any;
   onBeforeEmit?: (context: CreatorConext) => any;
   onAfterEmit?: (context: CreatorConext) => any;

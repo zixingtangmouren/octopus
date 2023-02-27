@@ -22,7 +22,7 @@ type ModifyFileContent = (filepath: string, callback: (content: string) => strin
 
 export interface CreatorConext {
   dirname: string;
-  dirPtah: string;
+  dirPath: string;
   logger: typeof logger;
   [key: string]: any;
   templateConfig: TemplateConfig;
@@ -33,7 +33,7 @@ export default class Creator {
   private readonly dirname: string;
   private templateName?: string;
   private readonly templates: TemplateConfig[];
-  private readonly dirPtah: string;
+  private readonly dirPath: string;
   private templateConfig!: TemplateConfig;
   private readonly templatesDir?: string;
   private readonly args?: string[];
@@ -42,7 +42,7 @@ export default class Creator {
 
   constructor(options: CreatorOptions) {
     this.dirname = options.dirname;
-    this.dirPtah = path.resolve(process.cwd(), this.dirname);
+    this.dirPath = path.resolve(process.cwd(), this.dirname);
     this.templateName = options.templateName;
     this.templates = options.templates;
     this.templatesDir = options.templatesDir;
@@ -89,10 +89,10 @@ export default class Creator {
   }
 
   private async checkTargetDir() {
-    const isExist = await fsextra.exists(this.dirPtah);
+    const isExist = await fsextra.exists(this.dirPath);
 
     if (isExist) {
-      const files = await fs.readdir(this.dirPtah);
+      const files = await fs.readdir(this.dirPath);
 
       if (files.length > 0) {
         const { go } = await inquirer.prompt({
@@ -109,8 +109,8 @@ export default class Creator {
   private async generateProject() {
     const { type, tips } = this.templateConfig;
 
-    const startCreateTip = processTip(tips.startCreate, this.context);
-    const creationCompletedTip = processTip(tips.creationCompleted, this.context);
+    const startCreateTip = processTip(tips!.startCreate, this.context);
+    const creationCompletedTip = processTip(tips!.creationCompleted, this.context);
 
     await this.applyBeforeEmitHook();
     startCreateTip && logger.info(startCreateTip as string);
@@ -139,7 +139,7 @@ export default class Creator {
 
     this.context = {
       dirname: this.dirname,
-      dirPtah: this.dirPtah,
+      dirPath: this.dirPath,
       templateName: this.templateName,
       templateConfig: this.templateConfig,
       logger,
@@ -179,7 +179,7 @@ export default class Creator {
     let tipsList: string[] = [];
 
     const { tips } = this.templateConfig;
-    const finish = tips.finish;
+    const finish = tips!.finish;
 
     if (finish !== false) {
       if (typeof finish === 'function') {
@@ -203,7 +203,7 @@ export default class Creator {
     if (this.templatesDir) {
       const { name } = this.templateConfig;
       const templateDir = path.resolve(this.templatesDir, name);
-      await fsextra.copy(templateDir, this.dirPtah);
+      await fsextra.copy(templateDir, this.dirPath);
     } else {
       logger.error('Local template path exception');
     }
@@ -228,7 +228,7 @@ export default class Creator {
     const [npmName, version] = npmPath.split('#');
 
     try {
-      await downloadFromNpm(npmName, version, this.dirPtah);
+      await downloadFromNpm(npmName, version, this.dirPath);
     } catch (error) {
       logger.error('Failed to download via npm');
       process.exit(-1);

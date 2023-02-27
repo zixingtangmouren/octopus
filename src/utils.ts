@@ -83,7 +83,7 @@ export const downloadFromGit = async () => {
   //
 };
 
-export const processTip = (tip: TipsValue<string | string[]>, context: CreatorConext) => {
+export const processTip = (tip: TipsValue<string | string[]> = false, context: CreatorConext) => {
   if (typeof tip === 'function') {
     return tip(context);
   }
