@@ -1,9 +1,10 @@
-import * as fs from 'fs-extra';
-import { type TemplateConfig, type CreatorConext } from './defineTmeplate';
-import * as path from 'path';
+import fsextra from 'fs-extra';
+import fs from 'fs/promises';
+import { type TemplateConfig } from './defineTmeplate.js';
+import path from 'path';
 import inquirer from 'inquirer';
-import { downloadFromNpm, logger } from './utils';
-import { ERROR_CODE } from './constant';
+import { downloadFromNpm, logger, processTip, downloadFromGit } from './utils.js';
+import { ERROR_CODE } from './constant.js';
 
 interface CreatorOptions {
   // 创建目录
@@ -14,34 +15,45 @@ interface CreatorOptions {
   templates: TemplateConfig[];
   // 本地模板的绝对路径
   templatesDir?: string;
+  args: string[];
+}
+
+type ModifyFileContent = (filepath: string, callback: (content: string) => string | Promise<string>) => Promise<void>;
+
+export interface CreatorConext {
+  dirname: string;
+  dirPath: string;
+  logger: typeof logger;
+  [key: string]: any;
+  templateConfig: TemplateConfig;
+  modifyFileContent: ModifyFileContent;
 }
 
 export default class Creator {
   private readonly dirname: string;
   private templateName?: string;
   private readonly templates: TemplateConfig[];
-  private readonly dirPtah: string;
+  private readonly dirPath: string;
   private templateConfig!: TemplateConfig;
   private readonly templatesDir?: string;
+  private readonly args?: string[];
 
   private context!: CreatorConext;
 
   constructor(options: CreatorOptions) {
     this.dirname = options.dirname;
-    this.dirPtah = path.resolve(process.cwd(), this.dirname);
+    this.dirPath = path.resolve(process.cwd(), this.dirname);
     this.templateName = options.templateName;
     this.templates = options.templates;
     this.templatesDir = options.templatesDir;
+    this.args = options.args;
   }
 
   public async run() {
     await this.selectTemplate();
+    await this.createContext();
     await this.checkTargetDir();
-    this.createContext();
-    await this.callBeforeTask();
     await this.generateProject();
-    await this.callAfterTask();
-
     this.endPrompt();
   }
 
@@ -77,10 +89,10 @@ export default class Creator {
   }
 
   private async checkTargetDir() {
-    const isExist = await fs.exists(this.dirPtah);
+    const isExist = await fsextra.exists(this.dirPath);
 
     if (isExist) {
-      const files = await fs.readdir(this.dirPtah);
+      const files = await fs.readdir(this.dirPath);
 
       if (files.length > 0) {
         const { go } = await inquirer.prompt({
@@ -95,9 +107,13 @@ export default class Creator {
   }
 
   private async generateProject() {
-    logger.info('Project is being created...');
+    const { type, tips } = this.templateConfig;
 
-    const { type } = this.templateConfig;
+    const startCreateTip = processTip(tips!.startCreate, this.context);
+    const creationCompletedTip = processTip(tips!.creationCompleted, this.context);
+
+    await this.applyBeforeEmitHook();
+    startCreateTip && logger.info(startCreateTip as string);
 
     switch (type) {
       case 'local':
@@ -109,48 +125,71 @@ export default class Creator {
       case 'npm':
         await this.downloadTemplateFromNpm();
     }
-
-    console.log(' ');
-    logger.success('Project initialization completed');
+    await this.applyAfterEmitHook();
+    creationCompletedTip && logger.success(creationCompletedTip as string);
   }
 
-  private createContext() {
+  private async createContext() {
+    // 修改文件内容
+    const modifyFileContent = async (filepath: string, callback: (content: string) => string | Promise<string>) => {
+      const content = await fs.readFile(filepath, 'utf-8');
+      const newContent = await callback(content);
+      await fs.writeFile(filepath, newContent, 'utf-8');
+    };
+
     this.context = {
       dirname: this.dirname,
-      dirPtah: this.dirPtah,
+      dirPath: this.dirPath,
       templateName: this.templateName,
+      templateConfig: this.templateConfig,
       logger,
+      args: this.args,
+      modifyFileContent,
     };
+
+    await this.applyContextCreatedHook();
   }
 
-  private async callBeforeTask() {
-    const { beforeTask } = this.templateConfig;
+  private async applyContextCreatedHook() {
+    const { onContextCreated } = this.templateConfig;
 
-    if (beforeTask) {
-      await beforeTask(this.context);
+    if (onContextCreated) {
+      await onContextCreated(this.context);
     }
   }
 
-  private async callAfterTask() {
-    const { afterTask } = this.templateConfig;
+  private async applyBeforeEmitHook() {
+    const { onBeforeEmit } = this.templateConfig;
 
-    if (afterTask) {
-      await afterTask(this.context);
+    if (onBeforeEmit) {
+      await onBeforeEmit(this.context);
     }
   }
 
-  private endPrompt() {
+  private async applyAfterEmitHook() {
+    const { onAfterEmit } = this.templateConfig;
+
+    if (onAfterEmit) {
+      await onAfterEmit(this.context);
+    }
+  }
+
+  private async endPrompt() {
     console.log(' ');
-    let tipsList: string[] = [`cd ${this.dirname}`, 'npm install', 'npm run start'];
+    let tipsList: string[] = [];
+
     const { tips } = this.templateConfig;
-    if (tips !== false) {
-      if (typeof tips === 'function') {
-        tipsList = tips(this.context);
-      } else if (Array.isArray(tips)) {
-        tipsList = tips;
+    const finish = tips!.finish;
+
+    if (finish !== false) {
+      if (typeof finish === 'function') {
+        tipsList = await finish(this.context);
+      } else if (Array.isArray(finish)) {
+        tipsList = finish;
       }
-      tipsList.forEach((tips) => {
-        logger.success(`  ${tips}`);
+
+      tipsList.forEach((tip) => {
+        logger.success(`  ${tip}`);
       });
 
       console.log(' ');
@@ -164,14 +203,15 @@ export default class Creator {
     if (this.templatesDir) {
       const { name } = this.templateConfig;
       const templateDir = path.resolve(this.templatesDir, name);
-      await fs.copy(templateDir, this.dirPtah);
+      await fsextra.copy(templateDir, this.dirPath);
     } else {
       logger.error('Local template path exception');
     }
   }
 
   private async downloadTemplateFromGit() {
-    // TODO: 待实现
+    // TODO: 待完善
+    await downloadFromGit();
   }
 
   /**
@@ -188,7 +228,7 @@ export default class Creator {
     const [npmName, version] = npmPath.split('#');
 
     try {
-      await downloadFromNpm(npmName, version, this.dirPtah);
+      await downloadFromNpm(npmName, version, this.dirPath);
     } catch (error) {
       logger.error('Failed to download via npm');
       process.exit(-1);

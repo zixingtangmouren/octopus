@@ -4,3 +4,4 @@
 .prettierrc
 tsconfig.json
 __test__
+src
