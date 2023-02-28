@@ -60,7 +60,7 @@ export default class Creator {
   private async selectTemplate() {
     const defaultTemplate = this.templates[0];
 
-    if (!this.templateName || this.templates.length > 1) {
+    if (!this.templateName && this.templates.length > 1) {
       const answer = await inquirer.prompt({
         type: 'list',
         name: 'template',
@@ -125,8 +125,8 @@ export default class Creator {
       case 'npm':
         await this.downloadTemplateFromNpm();
     }
-    await this.applyAfterEmitHook();
     creationCompletedTip && logger.success(creationCompletedTip as string);
+    await this.applyAfterEmitHook();
   }
 
   private async createContext() {
@@ -209,9 +209,12 @@ export default class Creator {
     }
   }
 
+  /**
+   * 通过 git 形式下载
+   */
   private async downloadTemplateFromGit() {
-    // TODO: 待完善
-    await downloadFromGit();
+    const { path: repository } = this.templateConfig;
+    await downloadFromGit(repository!, this.dirPath);
   }
 
   /**
