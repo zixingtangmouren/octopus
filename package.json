@@ -1,6 +1,6 @@
 {
   "name": "@tangjs/octopus",
-  "version": "2.0.1",
+  "version": "2.2.1",
   "description": "",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -8,7 +8,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "dev": "tsc --watch"
+    "dev": "tsc --watch",
+    "ver:minor": "standard-version -- --release-as minor",
+    "ver:patch": "standard-version -- --release-as patch",
+    "ver:major": "standard-version -- --release-as major"
   },
   "keywords": [],
   "author": "tangmouren",
@@ -29,10 +32,12 @@
     "eslint-plugin-n": "^15.0.0",
     "eslint-plugin-promise": "^6.0.0",
     "prettier": "^2.8.4",
+    "standard-version": "^9.5.0",
     "typescript": "^4.9.5"
   },
   "dependencies": {
     "commander": "^10.0.0",
+    "download-git-repo": "^3.0.2",
     "figlet": "^1.5.2",
     "fs-extra": "^11.1.0",
     "gradient-string": "^2.0.2",

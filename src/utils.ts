@@ -3,6 +3,8 @@ import { getNpmTarball, getAndExtractTarball, getLatestVersion } from 'ice-npm-u
 import gradient from 'gradient-string';
 import { type TipsValue } from './defineTmeplate.js';
 import { type CreatorConext } from './creator.js';
+// @ts-ignore
+import gitdownload from 'download-git-repo';
 
 export interface BannerConfig {
   type: 'text' | 'block';
@@ -79,8 +81,13 @@ export const downloadFromNpm = async (npmName: string, npmVerison: string = 'lat
 /**
  * 通过 git 下载
  */
-export const downloadFromGit = async () => {
-  //
+export const downloadFromGit = async (repository: string, dir: string, gitOptions?: Record<any, any>) => {
+  const opt = gitOptions ?? {};
+  return new Promise((resolve, reject) => {
+    gitdownload(repository, dir, opt, (err: any) => {
+      err ? reject(err) : resolve(true);
+    });
+  });
 };
 
 export const processTip = (tip: TipsValue<string | string[]> = false, context: CreatorConext) => {

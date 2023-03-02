@@ -60,7 +60,7 @@ export default class Creator {
   private async selectTemplate() {
     const defaultTemplate = this.templates[0];
 
-    if (!this.templateName || this.templates.length > 1) {
+    if (!this.templateName && this.templates.length > 1) {
       const answer = await inquirer.prompt({
         type: 'list',
         name: 'template',
@@ -125,8 +125,8 @@ export default class Creator {
       case 'npm':
         await this.downloadTemplateFromNpm();
     }
-    await this.applyAfterEmitHook();
     creationCompletedTip && logger.success(creationCompletedTip as string);
+    await this.applyAfterEmitHook();
   }
 
   private async createContext() {
@@ -209,9 +209,23 @@ export default class Creator {
     }
   }
 
+  /**
+   * 通过 git 形式下载
+   */
   private async downloadTemplateFromGit() {
-    // TODO: 待完善
-    await downloadFromGit();
+    const { path: repository, gitOptions } = this.templateConfig;
+
+    if (!repository) {
+      logger.error('The git warehouse address must be filled in');
+      process.exit(-1);
+    }
+
+    try {
+      await downloadFromGit(repository!, this.dirPath, gitOptions);
+    } catch (error) {
+      logger.error('Download from git repository failed');
+      process.exit(-1);
+    }
   }
 
   /**

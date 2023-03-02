@@ -4,6 +4,9 @@ const templateA = defineTemplate({
   name: 'template-a',
   description: '模板 A',
   type: 'local',
+  tips: {
+    finish: false,
+  },
 });
 
 const reactTemplate = defineTemplate({
@@ -13,15 +16,22 @@ const reactTemplate = defineTemplate({
   tips: {
     startCreate: false,
   },
-  // onBeforeEmit: (ctx) => {
-  //   console.log('onBeforeEmit', ctx);
-  // },
-  // onAfterEmit: (ctx) => {
-  //   console.log('onBeforeEmit', ctx);
-  // },
-  // onContextCreated: (ctx) => {
-  //   ctx.xx = 100;
-  // },
+  onBeforeEmit: (ctx) => {
+    console.log('onBeforeEmit', ctx);
+  },
+  onAfterEmit: (ctx) => {
+    console.log('onBeforeEmit', ctx);
+  },
+  onContextCreated: (ctx) => {
+    ctx.xx = 100;
+  },
 });
 
-export default [templateA, reactTemplate];
+const onlineReactTemplate = defineTemplate({
+  name: 'online-react-template', // 如果是本地模板，必须跟 local 下的目录同名
+  description: 'online react template',
+  path: 'zixingtangmouren/react-template',
+  type: 'git',
+});
+
+export default [templateA, reactTemplate, onlineReactTemplate];

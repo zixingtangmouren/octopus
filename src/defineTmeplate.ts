@@ -13,6 +13,7 @@ export interface TemplateConfig {
   type?: 'local' | 'git' | 'npm';
   path?: string;
   tips?: Partial<Tips>;
+  gitOptions?: Record<any, any>;
   onContextCreated?: (context: CreatorConext) => any;
   onBeforeEmit?: (context: CreatorConext) => any;
   onAfterEmit?: (context: CreatorConext) => any;
@@ -30,6 +31,7 @@ export default function defineTemplate(config: TemplateConfig): TemplateConfig {
     description: config.description || config.name,
     type: config.type ?? 'local',
     path: config.path,
+    gitOptions: config.gitOptions,
     tips: config.tips
       ? {
           ...defaultTips,
