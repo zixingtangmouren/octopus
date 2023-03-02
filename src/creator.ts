@@ -213,8 +213,19 @@ export default class Creator {
    * 通过 git 形式下载
    */
   private async downloadTemplateFromGit() {
-    const { path: repository } = this.templateConfig;
-    await downloadFromGit(repository!, this.dirPath);
+    const { path: repository, gitOptions } = this.templateConfig;
+
+    if (!repository) {
+      logger.error('The git warehouse address must be filled in');
+      process.exit(-1);
+    }
+
+    try {
+      await downloadFromGit(repository!, this.dirPath, gitOptions);
+    } catch (error) {
+      logger.error('Download from git repository failed');
+      process.exit(-1);
+    }
   }
 
   /**

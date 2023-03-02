@@ -81,11 +81,12 @@ export const downloadFromNpm = async (npmName: string, npmVerison: string = 'lat
 /**
  * 通过 git 下载
  */
-export const downloadFromGit = async (repository: string, dir: string) => {
+export const downloadFromGit = async (repository: string, dir: string, gitOptions?: Record<any, any>) => {
+  const opt = gitOptions ?? {};
   return new Promise((resolve, reject) => {
-    gitdownload(repository, dir, (err: any) => {
+    gitdownload(repository, dir, opt, (err: any) => {
       err ? reject(err) : resolve(true);
-    })
+    });
   });
 };
 

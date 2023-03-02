@@ -8,7 +8,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "dev": "tsc --watch"
+    "dev": "tsc --watch",
+    "ver:minor": "standard-version -- --release-as minor",
+    "ver:patch": "standard-version -- --release-as patch",
+    "ver:major": "standard-version -- --release-as major"
   },
   "keywords": [],
   "author": "tangmouren",
@@ -29,6 +32,7 @@
     "eslint-plugin-n": "^15.0.0",
     "eslint-plugin-promise": "^6.0.0",
     "prettier": "^2.8.4",
+    "standard-version": "^9.5.0",
     "typescript": "^4.9.5"
   },
   "dependencies": {
